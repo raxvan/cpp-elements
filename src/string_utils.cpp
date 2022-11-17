@@ -190,7 +190,7 @@ namespace cppe
 	cppedecl_noalias bool strutil::equals(const char* x, const char* y, const std::size_t sz)
 	{
 		CPPE_ASSERT(x != nullptr && y != nullptr);
-
+#ifdef USE_CUSTOM_STR_COMPARE
 		const uint32_t* a = reinterpret_cast<const uint32_t*>(x);
 		const uint32_t* b = reinterpret_cast<const uint32_t*>(y);
 		std::size_t		l4 = lower4(sz);
@@ -206,11 +206,14 @@ namespace cppe
 			is_equal = (x[i] == y[i]);
 		}
 		return is_equal;
+#else
+		return std::char_traits<char>::compare(x, y, sz) == 0;
+#endif
 	}
 	cppedecl_noalias bool strutil::less(const char* _left, const char* _right, const std::size_t sz)
 	{
-		CPPE_ASSERT(_left != nullptr && _right != nullptr);
-
+		CPPE_ASSERT(_left != nullptr && _right != nullptr && _left != _right);
+#ifdef USE_CUSTOM_STR_COMPARE
 		const uint32_t* _l = reinterpret_cast<const uint32_t*>(_left);
 		const uint32_t* _r = reinterpret_cast<const uint32_t*>(_right);
 
@@ -230,6 +233,9 @@ namespace cppe
 				return false;
 		}
 		return false;
+#else
+		return std::char_traits<char>::compare(_left, _right, sz) < 0;
+#endif
 	}
 
 	cppedecl_noalias bool strutil::equals(const char* x, const char* y)

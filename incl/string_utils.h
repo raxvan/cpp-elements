@@ -11,7 +11,7 @@ namespace cppe
 	public:
 		static char		decodeEscapeChar(const char c);
 		static bool		decodeEscapeChar(const char c, char& out); // return false if it's unicode escape sequence '\uXXXX'
-		static uint32_t base16charToUnsigned32(const char c);	   //->0..15
+		static uint32_t base16charToUnsigned32(const char c);	   //->0..9, a..f | A--F -> 0..15
 		static uint32_t base16char4ToUnsigned32(const std::array<char, 4> c);
 
 		static bool unicodeFromBase16char(const std::array<char, 4> c, uint32_t& out); // returns true if the sequence requires a surrogate
