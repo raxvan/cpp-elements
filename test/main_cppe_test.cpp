@@ -286,6 +286,12 @@ void test_bucket_pool()
 	for (auto h : bhandles)
 		bp.release(h);
 
+	bp.validate_empty();
+	for (std::size_t i = 0; i < 20; i++)
+		bp.create();
+	bp.clear();
+	bp.validate_empty();
+
 	for (auto h : phandles)
 		pp.release(h);
 }

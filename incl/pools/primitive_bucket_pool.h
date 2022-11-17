@@ -75,6 +75,15 @@ namespace cppe
 		~primitive_bucket_pool()
 		{
 #ifdef CPPE_POOL_VALIDATION
+			validate_empty();
+#endif
+			for (auto b : m_buckets)
+				delete[] b.buffer;
+		}
+
+#ifdef CPPE_POOL_VALIDATION
+		void validate_empty()
+		{
 			// make sure everything is deallocated
 			std::sort(m_free_indices.begin(), m_free_indices.end());
 			uint_fast32_t start = bucket_index_to_element_index(uint_fast32_t(BUCKET_SKIP_COUNT));
@@ -83,10 +92,8 @@ namespace cppe
 				CPPE_ASSERT(start == m_free_indices[i]);
 				start++;
 			}
-#endif
-			for (auto b : m_buckets)
-				delete[] b.buffer;
 		}
+#endif
 
 		cppedecl_finline void swap(class_t& other)
 		{
@@ -142,8 +149,8 @@ namespace cppe
 				auto bucket_size = bucket_index_to_bucket_size(uint_fast32_t(b + BUCKET_SKIP_COUNT - 1));
 				auto element_id = bucket_index_to_element_index(uint_fast32_t(b + BUCKET_SKIP_COUNT - 1));
 				m_free_indices.reserve(m_free_indices.size() + bucket_size - 1);
-				for (uint_fast32_t i = 1; i < bucket_size; i++)
-					m_free_indices.push_back(element_id + bucket_size - i);
+				for (uint_fast32_t i = 0; i < bucket_size; i++)
+					m_free_indices.push_back(element_id + bucket_size - i - 1);
 			}
 		}
 
