@@ -4,6 +4,12 @@
 
 namespace cppe
 {
+	int32_t string_view_traits::size_from_size_t(const std::size_t s)
+	{
+		CPPE_ASSERT(s < std::size_t(std::numeric_limits<int32_t>::max()/2));
+		return int32_t(s);
+	}
+
 	string_view::string_view()
 		: m_px("")
 		, m_size(0)

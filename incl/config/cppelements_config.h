@@ -8,6 +8,8 @@
 //#define USE_CUSTOM_STDSTR
 //#define USE_CUSTOM_STR_COMPARE
 
+#define CPPE_POOL_VALIDATION //depends on CPPE_ENABLE_ASSERT
+
 //--------------------------------------------------------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------------------------------------------------------
 
@@ -15,6 +17,10 @@
 
 #	include <ttf.h>
 #	define CPPE_ASSERT TTF_ASSERT
+
+#	ifndef CPPE_POOL_VALIDATION
+#		define CPPE_POOL_VALIDATION
+#	endif
 
 #elif defined(CPPE_ENABLE_ASSERT)
 //--------------------------------------------------------------------------------------------------------------------------------

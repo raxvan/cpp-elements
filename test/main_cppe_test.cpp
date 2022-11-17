@@ -206,7 +206,7 @@ void test_lambda_buffer()
 
 void test_bucket_pool()
 {
-	using bucket_pool_t = cppe::primitive_bucket_pool<std::size_t>;
+	using bucket_pool_t = cppe::primitive_bucket_pool<std::size_t, 3>;
 	using primitive_pool_t = cppe::primitive_pool<std::size_t>;
 
 	bucket_pool_t					   bp;
@@ -216,13 +216,13 @@ void test_bucket_pool()
 
 	for (std::size_t i = 0; i < 100; i++)
 	{
-		auto handle = bp.alloc();
+		auto handle = bp.create();
 		TTF_ASSERT(handle.ptr != nullptr);
-		TTF_ASSERT(handle.get_index() == i);
+		TTF_ASSERT(handle.get_debug_index() == i);
 		*handle.ptr = i;
 		bhandles.push_back(handle);
 
-		auto phandle = pp.alloc();
+		auto phandle = pp.create();
 		TTF_ASSERT(phandle != nullptr);
 		phandles.push_back(phandle);
 	}
@@ -232,13 +232,16 @@ void test_bucket_pool()
 		{
 			{
 				std::size_t hi = (i * 61) % bhandles.size();
-				bp.free(bhandles[hi]);
+				if (i % 2 == 0)
+					bp.release(bhandles[hi]);
+				else
+					bp.release(bhandles[hi].ptr);
 				bhandles.erase(bhandles.begin() + hi);
 			}
 
 			{
 				std::size_t hi = (i * 61) % phandles.size();
-				pp.free(phandles[hi]);
+				pp.release(phandles[hi]);
 				phandles.erase(phandles.begin() + hi);
 			}
 		}
@@ -247,31 +250,44 @@ void test_bucket_pool()
 		for (std::size_t i = 0; i < 20; i++)
 		{
 			{
-				auto handle = bp.alloc();
+				auto handle = bp.create();
 				TTF_ASSERT(handle.ptr != nullptr);
-				TTF_ASSERT(handle.get_index() == *handle.ptr);
+				TTF_ASSERT(handle.get_debug_index() == *handle.ptr);
 				bhandles.push_back(handle);
 			}
 
 			{
-				auto handle = pp.alloc();
+				auto handle = pp.create();
 				TTF_ASSERT(handle != nullptr);
 				phandles.push_back(handle);
 			}
 		}
 	};
-
+	{
+		std::size_t index = 0;
+		bp.visit_objects([&](std::size_t i) {
+			TTF_ASSERT(index == i);
+			index++;
+		});
+	}
 	for (std::size_t i = 0; i < 20; i++)
 	{
 		erase();
 		append();
 	}
+	{
+		std::size_t index = 0;
+		bp.visit_objects([&](std::size_t i) {
+			TTF_ASSERT(index == i);
+			index++;
+		});
+	}
 
 	for (auto h : bhandles)
-		bp.free(h);
+		bp.release(h);
 
 	for (auto h : phandles)
-		pp.free(h);
+		pp.release(h);
 }
 
 void core_test_main()

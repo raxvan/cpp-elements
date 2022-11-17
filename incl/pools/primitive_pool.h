@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../config/cppelements_config.h"
-#ifdef CPPE_TESTING
+#ifdef CPPE_POOL_VALIDATION
 #	include <algorithm>
 #endif
 
@@ -23,7 +23,7 @@ namespace cppe
 
 		~primitive_pool()
 		{
-#ifdef CPPE_TESTING
+#ifdef CPPE_POOL_VALIDATION
 			// make sure everything is deallocated
 			std::sort(m_free_indices.begin(), m_free_indices.end());
 			for (uint_fast32_t i = 0; i < m_free_indices.size(); i++)
@@ -34,7 +34,7 @@ namespace cppe
 		}
 
 	public:
-		cppedecl_finline T* alloc()
+		cppedecl_finline T* create()
 		{
 			if (m_free_indices.size() > 0)
 			{
@@ -45,7 +45,7 @@ namespace cppe
 			return nullptr;
 		}
 
-		void free(const T* px)
+		void release(const T* px)
 		{
 			auto d = start_end_distance(&m_data[0], px);
 			CPPE_ASSERT(d < m_data.size());
@@ -60,22 +60,32 @@ namespace cppe
 
 	public:
 		template <class F>
-		void visit_allocations(const F& _func)
+		void visit_objects(const F& _func)
 		{
-			std::sort(m_free_indices.begin(), m_free_indices.end());
+			std::sort(m_free_indices.begin(), m_free_indices.end(), std::greater<uint_fast32_t>());
 
 			uint_fast32_t itr = 0;
-			for (const auto ind : m_free_indices)
+			for (std::size_t i = m_free_indices.size(); i > 0 ; i--)
 			{
+				const auto ind = m_free_indices[i - 1];
 				while (itr < ind)
 					_func(m_data[itr++]);
 				itr++;
 			}
 		}
+		void clear()
+		{
+			m_free_indices.resize(m_data.size());
+			uint_fast32_t s = uint_fast32_t(m_data.size());
+			for (uint_fast32_t i = s; i > 0; i++)
+			{
+				m_free_indices[s - i] = s - i - 1;
+			}
+		}
 
 		void rebuild(const std::size_t sz)
 		{
-			visit_allocations([&](T& e) { e = T(); });
+			visit_objects([&](T& e) { e = T(); });
 
 			m_free_indices.resize(sz);
 			for (uint_fast32_t i = 0; i < sz; i++)
