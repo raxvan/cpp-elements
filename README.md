@@ -1,4 +1,4 @@
-# cppelements
+# cpp-elements
 
 A collection of various classes and utilities that are probably not part of the standard library.
 I say probably not part because this codebase is old (really old), but some things are still relevant.
