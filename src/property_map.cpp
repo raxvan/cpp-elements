@@ -141,7 +141,7 @@ namespace cppe
 	void property_map::LoadIni(std::istream& is)
 	{
 		std::vector<std::string> lms;
-		std::string				line;
+		std::string				 line;
 		while (std::getline(is, line))
 		{
 			lms.clear();

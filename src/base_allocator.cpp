@@ -21,14 +21,14 @@ namespace cppe
 	void* overflow_allocator::alloc(const std::size_t sz)
 	{
 		detail::byte_t* r = new detail::byte_t[sz];
-		m_allocations.insert({ r,sz });
+		m_allocations.insert({ r, sz });
 		return r;
 	}
 
 	void overflow_allocator::free(const void* p)
 	{
 		const detail::byte_t* bp = static_cast<const detail::byte_t*>(p);
-		auto		  itr = m_allocations.find({ bp,0 });
+		auto				  itr = m_allocations.find({ bp, 0 });
 
 		CPPE_ASSERT(itr != m_allocations.end());
 
@@ -38,7 +38,7 @@ namespace cppe
 	bool overflow_allocator::try_free(const void* p)
 	{
 		const detail::byte_t* bp = static_cast<const detail::byte_t*>(p);
-		auto		  itr = m_allocations.find({ bp,0 });
+		auto				  itr = m_allocations.find({ bp, 0 });
 		if (itr != m_allocations.end())
 		{
 			m_allocations.erase(itr);
@@ -54,7 +54,7 @@ namespace cppe
 	{
 		for (const auto& kv : m_allocations)
 		{
-			if(kv.ptr <= p && p < (kv.ptr + kv.size))
+			if (kv.ptr <= p && p < (kv.ptr + kv.size))
 				return true;
 		}
 		return false;

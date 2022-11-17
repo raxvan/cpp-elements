@@ -46,7 +46,6 @@ namespace cppe
 		: string_view(_make_string_view(s, sz))
 	{
 	}
-	
 
 	std::string string_view::std_string() const
 	{

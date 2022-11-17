@@ -31,7 +31,8 @@ namespace cppe
 		void swap(overflow_allocator& other);
 
 		std::size_t size() const;
-		bool owns(const void* p) const;
+		bool		owns(const void* p) const;
+
 	public: // danger zone
 		template <class F>
 		// void F(overflow_allocator&)
@@ -49,25 +50,25 @@ namespace cppe
 		struct entry
 		{
 			const detail::byte_t* ptr;
-			std::size_t size;
-			inline bool operator <(const entry& other) const
+			std::size_t			  size;
+			inline bool			  operator<(const entry& other) const
 			{
 				return ptr < other.ptr;
 			}
-			inline bool operator ==(const entry& other) const
+			inline bool operator==(const entry& other) const
 			{
 				return ptr == other.ptr;
 			}
-			inline bool operator !=(const entry& other) const
+			inline bool operator!=(const entry& other) const
 			{
 				return ptr == other.ptr;
 			}
 		};
 		struct entry_hash
 		{
-			std::size_t operator() (const entry &e) const
+			std::size_t operator()(const entry& e) const
 			{
-				return std::hash<const detail::byte_t*>{}(e.ptr);
+				return std::hash<const detail::byte_t*> {}(e.ptr);
 			}
 		};
 		std::unordered_set<entry, entry_hash> m_allocations;
@@ -91,7 +92,8 @@ namespace cppe
 		bool  try_free(const void* p);
 
 		std::size_t size();
-		bool owns(const void* p);
+		bool		owns(const void* p);
+
 	public: // danger zone
 		template <class F>
 		// void F(overflow_allocator&)

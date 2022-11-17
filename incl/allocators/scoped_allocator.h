@@ -43,13 +43,13 @@ namespace cppe
 		stack_allocator& operator=(const stack_allocator&) = delete;
 
 	public:
-		void* alloc_linear(const std::size_t sz); 
+		void* alloc_linear(const std::size_t sz);
 		//^ allocates multiple elements right after another in the same space; like a push_back()
 
-		void* alloc_unique(const std::size_t sz); 
+		void* alloc_unique(const std::size_t sz);
 		//^ assume only one allocation the can be resized; like a resize();
-		
-		void  clear();
+
+		void clear();
 
 	public:
 		inline void* operator()(const std::size_t sz)
@@ -120,16 +120,16 @@ namespace cppe
 
 		void push_back(const T& value)
 		{
-			std::size_t end = m_size++;
-			detail::byte_t*		p = stack_allocator::alloc_unique(get_buffer_size(m_size));
+			std::size_t		end = m_size++;
+			detail::byte_t* p = stack_allocator::alloc_unique(get_buffer_size(m_size));
 			CPPE_ASSERT(p != nullptr);
 			new (get_element_ptr(p, end)) T(value);
 		}
 		template <class FT>
 		void push_back(FT&& value)
 		{
-			std::size_t end = m_size++;
-			detail::byte_t*		p = stack_allocator::alloc_unique(get_buffer_size(m_size));
+			std::size_t		end = m_size++;
+			detail::byte_t* p = stack_allocator::alloc_unique(get_buffer_size(m_size));
 			CPPE_ASSERT(p != nullptr);
 			new (get_element_ptr(p, end)) T(std::forward<FT>(value));
 		}

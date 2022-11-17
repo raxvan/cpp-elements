@@ -32,14 +32,14 @@ namespace cllio
 }
 
 #		define CPPE_ASSERT(_COND)                                  \
-			do                                                       \
-			{                                                        \
-				if (!(_COND))                                        \
+			do                                                      \
+			{                                                       \
+				if (!(_COND))                                       \
 					cppe_assert_failed(__FILE__, __LINE__, #_COND); \
 			} while (false)
 #		define CPPE_ASSERT_FALSE(CSTR_MSG)                       \
-			do                                                     \
-			{                                                      \
+			do                                                    \
+			{                                                     \
 				cppe_assert_failed(__FILE__, __LINE__, CSTR_MSG); \
 			} while (false)
 #	endif
@@ -51,15 +51,15 @@ namespace cllio
 #ifndef CPPE_ASSERT
 
 #	define CPPE_ASSERT(...) \
-		do                    \
-		{                     \
+		do                   \
+		{                    \
 		} while (false)
 #endif
 
 #ifndef CPPE_ASSERT_FALSE
 #	define CPPE_ASSERT_FALSE(...) \
-		do                          \
-		{                           \
+		do                         \
+		{                          \
 			CPPE_ASSERT(false);    \
 		} while (false)
 

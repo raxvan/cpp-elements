@@ -19,6 +19,7 @@
 #include <allocators/threaded_linear_allocator.h>
 #include <allocators/scoped_allocator.h>
 #include <pools/primitive_bucket_pool.h>
+#include <pools/primitive_pool.h>
 
 // using namespace cppe;
 
@@ -93,8 +94,6 @@ void test_stack_allocator()
 		TEST_ASSERT(alc.alloc_linear(unit) == nullptr);
 		TEST_ASSERT(alc.size() == (sz + unit));
 	};
-
-	
 
 	{
 		cppe::stack_allocator alc(buffer);
@@ -205,11 +204,82 @@ void test_lambda_buffer()
 	scope_allocator.clear();
 }
 
+void test_bucket_pool()
+{
+	using bucket_pool_t = cppe::primitive_bucket_pool<std::size_t>;
+	using primitive_pool_t = cppe::primitive_pool<std::size_t>;
+
+	bucket_pool_t					   bp;
+	primitive_pool_t				   pp { 100 };
+	std::vector<bucket_pool_t::handle> bhandles;
+	std::vector<std::size_t*>		   phandles;
+
+	for (std::size_t i = 0; i < 100; i++)
+	{
+		auto handle = bp.alloc();
+		TTF_ASSERT(handle.ptr != nullptr);
+		TTF_ASSERT(handle.get_index() == i);
+		*handle.ptr = i;
+		bhandles.push_back(handle);
+
+		auto phandle = pp.alloc();
+		TTF_ASSERT(phandle != nullptr);
+		phandles.push_back(phandle);
+	}
+
+	auto erase = [&]() {
+		for (std::size_t i = 0; i < 20; i++)
+		{
+			{
+				std::size_t hi = (i * 61) % bhandles.size();
+				bp.free(bhandles[hi]);
+				bhandles.erase(bhandles.begin() + hi);
+			}
+
+			{
+				std::size_t hi = (i * 61) % phandles.size();
+				pp.free(phandles[hi]);
+				phandles.erase(phandles.begin() + hi);
+			}
+		}
+	};
+	auto append = [&]() {
+		for (std::size_t i = 0; i < 20; i++)
+		{
+			{
+				auto handle = bp.alloc();
+				TTF_ASSERT(handle.ptr != nullptr);
+				TTF_ASSERT(handle.get_index() == *handle.ptr);
+				bhandles.push_back(handle);
+			}
+
+			{
+				auto handle = pp.alloc();
+				TTF_ASSERT(handle != nullptr);
+				phandles.push_back(handle);
+			}
+		}
+	};
+
+	for (std::size_t i = 0; i < 20; i++)
+	{
+		erase();
+		append();
+	}
+
+	for (auto h : bhandles)
+		bp.free(h);
+
+	for (auto h : phandles)
+		pp.free(h);
+}
+
 void core_test_main()
 {
 	TEST_FUNCTION(test_threaded_linear_allocator);
 	TEST_FUNCTION(test_stack_allocator);
 	TEST_FUNCTION(test_lambda_buffer);
+	TEST_FUNCTION(test_bucket_pool);
 }
 
 TEST_MAIN(core_test_main);

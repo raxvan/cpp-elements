@@ -11,7 +11,7 @@ namespace cppe
 
 		static int32_t size_from_size_t(const std::size_t);
 
-		template< class InputIt >
+		template <class InputIt>
 		static std::size_t size_t_distance(InputIt first, InputIt last);
 	};
 
@@ -23,7 +23,6 @@ namespace cppe
 	public:
 		using string_view_size_t = string_view_traits::length_storage_t;
 
-		
 	public:
 		inline ~string_view()
 		{
@@ -63,7 +62,7 @@ namespace cppe
 		{
 		}
 
-		template<class Allocator>
+		template <class Allocator>
 		string_view(const std::vector<char, Allocator>& vec_data)
 			: string_view(vec_data.data(), vec_data.size())
 		{
@@ -206,13 +205,12 @@ namespace cppe
 	{
 	}
 
-
-	template< class InputIt >
+	template <class InputIt>
 	cppedecl_finline std::size_t string_view_traits::size_t_distance(InputIt first, InputIt last)
 	{
 		auto r = std::distance(first, last);
 		CPPE_ASSERT(r >= 0);
 		return static_cast<std::size_t>(r);
 	}
-	
+
 }

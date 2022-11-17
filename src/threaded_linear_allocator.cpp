@@ -22,7 +22,6 @@ namespace cppe
 		m_itr.store(0);
 		m_storage.resize(m_storage.size() + sz);
 	}
-	
 
 	bool threaded_linear_allocator::owns(const void* mem) const
 	{

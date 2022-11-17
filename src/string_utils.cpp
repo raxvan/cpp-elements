@@ -67,7 +67,6 @@ namespace cppe
 		original = 0x10000 + ((original & 0x3FF) << 10) + (sp & 0x3FF);
 	}
 
-	
 	uint32_t strutil::base16char4ToUnsigned32(const std::array<char, 4> c)
 	{
 
@@ -392,7 +391,7 @@ namespace cppe
 		{
 			CPPE_ASSERT(is_readable_ascii(*source));
 			hash = hash ^ uint32_t(*source++); /* xor  the low 8 bits */
-			hash = hash * 16777619;							/* multiply by the magic number */
+			hash = hash * 16777619;			   /* multiply by the magic number */
 		}
 		return hash;
 	}
@@ -407,7 +406,7 @@ namespace cppe
 		{
 			CPPE_ASSERT(is_readable_ascii(*source));
 			hash = hash ^ uint64_t(*source++); /* xor  the low 8 bits */
-			hash = hash * 1099511628211ull;					/* multiply by the magic number */
+			hash = hash * 1099511628211ull;	   /* multiply by the magic number */
 		}
 		return hash;
 	}

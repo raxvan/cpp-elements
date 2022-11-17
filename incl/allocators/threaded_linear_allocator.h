@@ -32,8 +32,8 @@ namespace cppe
 
 	protected:
 		// main buffer data:
-		std::atomic<std::size_t> m_itr { 0 };
-		std::vector<detail::byte_t>		 m_storage;
+		std::atomic<std::size_t>	m_itr { 0 };
+		std::vector<detail::byte_t> m_storage;
 	};
 
 	//--------------------------------------------------------------------------------------------------------------------------------
@@ -53,12 +53,12 @@ namespace cppe
 		threaded_linear_safe_allocator() = default;
 
 	public:
-		void clear(); // locked, resets allocators to "free" state.
-		void reserve_and_clear();//if reserve_overflow is true overflow is allocated into
+		void clear();			  // locked, resets allocators to "free" state.
+		void reserve_and_clear(); // if reserve_overflow is true overflow is allocated into
 
 		void* alloc(const std::size_t sz); // does what you expect
 
-		bool  owns(const void* mem); // returns true if memory is owned directly
+		bool owns(const void* mem); // returns true if memory is owned directly
 	public:
 		inline void* operator()(const std::size_t sz)
 		{
@@ -128,9 +128,7 @@ namespace cppe
 		if (threaded_linear_allocator::owns(mem))
 			return true;
 		bool r = false;
-		m_overflow_fallback.intrusive_visit([&](overflow_allocator& alc) {
-			r = alc.owns(mem);
-		});
+		m_overflow_fallback.intrusive_visit([&](overflow_allocator& alc) { r = alc.owns(mem); });
 		return r;
 	}
 }

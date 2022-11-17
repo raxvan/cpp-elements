@@ -1,6 +1,9 @@
 #pragma once
 
-#include "../config/core_base_include.h"
+#include "../config/cppelements_config.h"
+#ifdef CPPE_TESTING
+#	include <algorithm>
+#endif
 
 namespace cppe
 {
@@ -12,17 +15,30 @@ namespace cppe
 		primitive_pool(const std::size_t sz)
 		{
 			m_free_indices.resize(sz);
-			for (std::size_t i = 0; i < sz; i++)
-				m_free_indices[i] = uint32_t(sz - i - 1);
+			for (uint_fast32_t i = 0; i < sz; i++)
+				m_free_indices[i] = uint_fast32_t(sz - i - 1);
 
 			m_data.resize(sz);
 		}
 
-		T* create()
+		~primitive_pool()
+		{
+#ifdef CPPE_TESTING
+			// make sure everything is deallocated
+			std::sort(m_free_indices.begin(), m_free_indices.end());
+			for (uint_fast32_t i = 0; i < m_free_indices.size(); i++)
+			{
+				CPPE_ASSERT(i == m_free_indices[i]);
+			}
+#endif
+		}
+
+	public:
+		cppedecl_finline T* alloc()
 		{
 			if (m_free_indices.size() > 0)
 			{
-				uint32_t i = m_free_indices.back();
+				uint_fast32_t i = m_free_indices.back();
 				m_free_indices.pop_back();
 				return &m_data[i];
 			}
@@ -31,23 +47,24 @@ namespace cppe
 
 		void free(const T* px)
 		{
-			auto d = il::ptr_distance(&m_data[0], px);
-			CPPE_ASSERT(d >= 0 && d < m_data.size());
-			auto& element = m_data[uint32_t(d)];
+			auto d = start_end_distance(&m_data[0], px);
+			CPPE_ASSERT(d < m_data.size());
+			auto& element = m_data[uint_fast32_t(d)];
 			{
 				// rebuild
 				element.~T();
 				new (&element) T;
 			}
-			m_free_indices.push_back(uint32_t(d));
+			m_free_indices.push_back(uint_fast32_t(d));
 		}
 
+	public:
 		template <class F>
 		void visit_allocations(const F& _func)
 		{
 			std::sort(m_free_indices.begin(), m_free_indices.end());
 
-			uint32_t itr = 0;
+			uint_fast32_t itr = 0;
 			for (const auto ind : m_free_indices)
 			{
 				while (itr < ind)
@@ -61,15 +78,15 @@ namespace cppe
 			visit_allocations([&](T& e) { e = T(); });
 
 			m_free_indices.resize(sz);
-			for (std::size_t i = 0; i < sz; i++)
-				m_free_indices[i] = uint32_t(sz - i - 1);
+			for (uint_fast32_t i = 0; i < sz; i++)
+				m_free_indices[i] = uint_fast32_t(sz - i - 1);
 
 			m_data.resize(sz);
 		}
 
 	public:
-		std_vector<uint32_t> m_free_indices;
-		std_vector<T>		 m_data;
+		std::vector<uint_fast32_t> m_free_indices;
+		std::vector<T>			   m_data;
 	};
 
 }

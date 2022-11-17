@@ -1,4 +1,5 @@
 
+#pragma once
 
 namespace cppe
 {
@@ -41,6 +42,13 @@ namespace cppe
 	inline deferred_call<F> defer(F&& _f)
 	{
 		return deferred_call<F>(std::forward<F>(_f));
+	}
+
+	template <class T>
+	cppedecl_finline uint_fast32_t start_end_distance(const T* _start, const T* _end)
+	{
+		CPPE_ASSERT(_start <= _end);
+		return uint_fast32_t(_end - _start);
 	}
 
 }

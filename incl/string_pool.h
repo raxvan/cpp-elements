@@ -194,7 +194,7 @@ namespace cppe
 
 	protected:
 		std::vector<char> m_content;
-		std::size_t		 m_count;
+		std::size_t		  m_count;
 	};
 
 	//------------------------------------------------------------------------------------------
