@@ -58,7 +58,7 @@ namespace cppe
 #ifdef CPPE_TESTING
 			inline uint_fast32_t get_debug_index() const
 			{
-				//used for validation only
+				// used for validation only
 				return index - ((uint_fast32_t(1) << uint_fast32_t(BUCKET_SKIP_COUNT)) - 1);
 			}
 #endif
@@ -125,26 +125,26 @@ namespace cppe
 		{
 			m_free_indices.push_back(handle.index);
 		}
-		
+
 		void release(const T* pv)
 		{
-			for(std::size_t i = 0, s = m_buckets.size();i < s;i++)
+			for (std::size_t i = 0, s = m_buckets.size(); i < s; i++)
 			{
 				const auto& b = m_buckets[i];
-				if(b.buffer <= pv && pv < (b.buffer + b.size))
+				if (b.buffer <= pv && pv < (b.buffer + b.size))
 				{
 					auto element_id = bucket_index_to_element_index(uint_fast32_t(i + BUCKET_SKIP_COUNT));
 					m_free_indices.push_back(element_id + start_end_distance(b.buffer, pv));
 					return;
 				}
 			}
-			CPPE_ASSERT(false);//object is not part of this pool
+			CPPE_ASSERT(false); // object is not part of this pool
 		}
 
 		void clear()
 		{
 			m_free_indices.clear();
-			for(std::size_t b = m_buckets.size();b > 0; b--)
+			for (std::size_t b = m_buckets.size(); b > 0; b--)
 			{
 				auto bucket_size = bucket_index_to_bucket_size(uint_fast32_t(b + BUCKET_SKIP_COUNT - 1));
 				auto element_id = bucket_index_to_element_index(uint_fast32_t(b + BUCKET_SKIP_COUNT - 1));
@@ -160,7 +160,7 @@ namespace cppe
 			std::sort(m_free_indices.begin(), m_free_indices.end(), std::greater<uint_fast32_t>());
 
 			uint_fast32_t itr = bucket_index_to_element_index(uint_fast32_t(BUCKET_SKIP_COUNT));
-			for (std::size_t i = m_free_indices.size(); i > 0 ; i--)
+			for (std::size_t i = m_free_indices.size(); i > 0; i--)
 			{
 				const auto ind = m_free_indices[i - 1];
 				while (itr < ind)
@@ -171,6 +171,7 @@ namespace cppe
 				itr++;
 			}
 		}
+
 	protected:
 		uint_fast32_t append_bucket()
 		{

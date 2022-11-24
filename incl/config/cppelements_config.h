@@ -8,7 +8,7 @@
 //#define USE_CUSTOM_STDSTR
 //#define USE_CUSTOM_STR_COMPARE
 
-#define CPPE_POOL_VALIDATION //depends on CPPE_ENABLE_ASSERT
+#define CPPE_POOL_VALIDATION // depends on CPPE_ENABLE_ASSERT
 
 //--------------------------------------------------------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------------------------------------------------------

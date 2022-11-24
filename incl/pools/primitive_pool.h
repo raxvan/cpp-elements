@@ -65,7 +65,7 @@ namespace cppe
 			std::sort(m_free_indices.begin(), m_free_indices.end(), std::greater<uint_fast32_t>());
 
 			uint_fast32_t itr = 0;
-			for (std::size_t i = m_free_indices.size(); i > 0 ; i--)
+			for (std::size_t i = m_free_indices.size(); i > 0; i--)
 			{
 				const auto ind = m_free_indices[i - 1];
 				while (itr < ind)
