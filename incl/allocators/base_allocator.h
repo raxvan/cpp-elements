@@ -22,7 +22,7 @@ namespace cppe
 		~overflow_allocator();
 
 	public:
-		void clear(); // returns the max memory size stored allocated by this class
+		void clear();
 
 		void* alloc(const std::size_t sz);
 		void  free(const void* p);

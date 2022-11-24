@@ -16,7 +16,7 @@
 #include <string_view.h>
 #include <vecmap.h>
 #include <allocators/custom_allocators.h>
-#include <allocators/threaded_linear_allocator.h>
+#include <allocators/linear_allocator.h>
 #include <allocators/scoped_allocator.h>
 #include <pools/primitive_bucket_pool.h>
 #include <pools/primitive_pool.h>
@@ -25,7 +25,7 @@
 
 void test_threaded_linear_allocator()
 {
-	cppe::threaded_linear_safe_allocator<cppe::threaded_overflow_allocator> alc;
+	cppe::safe_linear_allocator<cppe::threaded_linear_allocator,cppe::threaded_overflow_allocator> alc;
 
 	std::size_t					index;
 	std::array<std::thread, 32> threads;
