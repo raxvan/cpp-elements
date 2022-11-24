@@ -32,9 +32,13 @@ namespace cppe
 		{
 			//empty
 		}
+		inline std::size_t size() const
+		{
+			return m_itr;
+		}
 	protected:
 		// main buffer data:
-		std::atomic<std::size_t>	m_itr{ 0 };
+		std::size_t					m_itr{ 0 };
 		std::vector<detail::byte_t> m_storage;
 	};
 
@@ -69,6 +73,10 @@ namespace cppe
 		{
 			//empty
 		}
+		inline std::size_t size() const
+		{
+			return m_itr.load();
+		}
 	protected:
 		// main buffer data:
 		std::atomic<std::size_t>	m_itr { 0 };
@@ -98,10 +106,20 @@ namespace cppe
 		void* alloc(const std::size_t sz); // does what you expect
 
 		bool owns(const void* mem); // returns true if memory is owned directly
+
 	public:
+		inline void free(const void* mem)
+		{
+			m_overflow_fallback.try_free(mem);
+		}
 		inline void* operator()(const std::size_t sz)
 		{
 			return alloc(sz);
+		}
+
+		inline std::size_t size() const
+		{
+			return LALLOC::size() + m_overflow_fallback.size();
 		}
 
 	public:

@@ -20,6 +20,7 @@
 #include <allocators/scoped_allocator.h>
 #include <pools/primitive_bucket_pool.h>
 #include <pools/primitive_pool.h>
+#include <pools/abstract_pool.h>
 
 // using namespace cppe;
 
@@ -296,12 +297,102 @@ void test_bucket_pool()
 		pp.release(h);
 }
 
+void test_abstract_pool()
+{
+	using allocator = cppe::safe_linear_allocator<cppe::linear_allocator, cppe::overflow_allocator>;
+	
+	cppe::AbstractPool<allocator> pool;
+
+	TTF_ASSERT(pool.size() == 0);
+
+	std::size_t called_cestructor_count = 0;
+
+	struct test_obj : public cppe::AbstractPoolEntry
+	{
+	public:
+		std::size_t* count = nullptr;;
+	public:
+		test_obj()
+		{
+		}
+		~test_obj()
+		{
+			(*count)++;
+		}
+	};
+
+	{
+		pool.set_capacity(sizeof(test_obj));
+
+		auto* inst1 = pool.create<test_obj>();
+		inst1->count = &called_cestructor_count;
+
+		TTF_ASSERT(pool.size() == sizeof(test_obj));
+
+		auto* inst2 = pool.create<test_obj>();
+		inst2->count = &called_cestructor_count;
+
+		TTF_ASSERT(pool.size() == sizeof(test_obj) * 2);
+
+		pool.release(inst1);
+		pool.release(inst2);	
+		TTF_ASSERT(called_cestructor_count == 2);
+	}
+
+	{
+		pool.clear();
+		TTF_ASSERT(called_cestructor_count == 2);
+
+		auto* inst1 = pool.create<test_obj>();
+		inst1->count = &called_cestructor_count;
+		auto* inst2 = pool.create<test_obj>();
+		inst2->count = &called_cestructor_count;
+
+		pool.clear();
+		TTF_ASSERT(called_cestructor_count == 4);
+		TTF_ASSERT(pool.size() == 0);
+	}
+
+	{
+		struct base_obj
+		{
+			int some_data{ 0 };
+			virtual ~base_obj()
+			{
+
+			}
+		};
+
+		struct test_obj1 : public base_obj, public cppe::AbstractPoolEntry
+		{
+		};
+		struct test_obj2 : public base_obj, public cppe::AbstractPoolEntryEx
+		{
+		};
+
+		pool.set_capacity(1);
+		auto* inst1 = pool.create<test_obj1>();
+		pool.release(inst1);
+		TTF_ASSERT(pool.size() != 0);//because it can't remove test_obj1 because allocator does not search properly in the alloc list
+		pool.clear();
+
+
+		auto* inst2 = pool.create<test_obj2>();
+		pool.release(inst2);
+		TTF_ASSERT(pool.size() == 0);
+	}
+
+}
+
+
 void core_test_main()
 {
 	TEST_FUNCTION(test_threaded_linear_allocator);
 	TEST_FUNCTION(test_stack_allocator);
 	TEST_FUNCTION(test_lambda_buffer);
 	TEST_FUNCTION(test_bucket_pool);
+	TEST_FUNCTION(test_abstract_pool);
+
 }
 
 TEST_MAIN(core_test_main);

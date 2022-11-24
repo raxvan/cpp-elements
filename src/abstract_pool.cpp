@@ -16,7 +16,7 @@ namespace cppe
 		CPPE_ASSERT(entry != nullptr);
 		if(first == nullptr)
 		{
-			CPPE_ASSERT(last != nullptr);
+			CPPE_ASSERT(last == nullptr);
 			first = entry;
 			last = entry;
 		}
@@ -44,12 +44,14 @@ namespace cppe
 			first = entry->right;
 			entry->right = nullptr;
 			CPPE_ASSERT(first != nullptr);
+			first->left = nullptr;
 		}
 		else if(entry == last)
 		{
 			last = entry->left;
 			entry->left = nullptr;
 			CPPE_ASSERT(last != nullptr);
+			last->right = nullptr;
 		}
 		else
 		{
