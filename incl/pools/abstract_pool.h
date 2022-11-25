@@ -11,21 +11,18 @@ namespace cppe
 	class AbstractPoolEntry //avoid multiple inheritance problem
 	{
 	protected:
-		friend class AbstractPoolListImpl;
-		template <class ALLOCATOR>
-		friend class AbstractPool;
+		friend class AbstractEntryContainer;
 
-	protected:
 		AbstractPoolEntry* left = nullptr;
 		AbstractPoolEntry* right = nullptr;
 
 	public:
-		inline const void* pool_entry_ptr() const
+		inline const void* get_entry_memory() const
 		{
 			//hack to solve multiple inheritance problem
 			return this;
 		}
-		inline void set_pool_entry_ptr(const void*)
+		inline void set_entry_memory(const void*)
 		{
 			//empty
 		}
@@ -38,11 +35,11 @@ namespace cppe
 	class AbstractPoolEntryEx : public AbstractPoolEntry
 	{
 	public:
-		inline const void* pool_entry_ptr() const
+		inline const void* get_entry_memory() const
 		{
 			return m_entry_ptr;
 		}
-		inline void set_pool_entry_ptr(const void* ep)
+		inline void set_entry_memory(const void* ep)
 		{
 			m_entry_ptr = ep;
 		}
@@ -52,20 +49,56 @@ namespace cppe
 
 	//--------------------------------------------------------------------------------------------------------------------------------
 
-
-	class AbstractPoolListImpl
+	class AbstractEntryContainer
 	{
-	protected:
+	private:
 		AbstractPoolEntry* first = nullptr;
 		AbstractPoolEntry* last = nullptr;
 
-		void link(AbstractPoolEntry* entry);
-		void unlink(AbstractPoolEntry* entry);
+	public:
+		using base_entry_t = AbstractPoolEntry;
+
+		void add_entry(AbstractPoolEntry* entry);
+		void remove_entry(AbstractPoolEntry* entry);
+		void clear();
+
+	public:
+		template <class F>
+		void visit(const F& _func)
+		{
+			auto* itr = first;
+			while(itr)
+			{
+				auto* next = itr->right;
+				_func(itr);
+				itr = next;
+			}
+		}
+	public:
+		template <class T>
+		static T* construct(void * m)
+		{
+			auto* r = new (m) T{};
+			r->set_entry_memory(m);
+			return r;
+		}
+		template <class T>
+		static const void* destruct_entry(T* eptr)
+		{
+			auto* r = eptr->get_entry_memory();
+			eptr->~T();
+			return r;
+		}
+
 	};
 
-	template <class ALLOCATOR>
-	class AbstractPool : public ALLOCATOR, public AbstractPoolListImpl
+	//--------------------------------------------------------------------------------------------------------------------------------
+
+	template <class ALLOCATOR, class CONTAINER = AbstractEntryContainer>
+	class AbstractPool : public ALLOCATOR, public CONTAINER
 	{
+	public:
+		using base_entry_t = CONTAINER::base_entry_t;
 	public:
 		template <class T>
 		T* create()
@@ -73,9 +106,9 @@ namespace cppe
 			constexpr std::size_t sz = alloc_size<T>();
 			void* m = ALLOCATOR::alloc(sz);
 			CPPE_ASSERT(m != nullptr);
-			T* r = new (m) T();
-			r->set_pool_entry_ptr(m);
-			link(r);
+			
+			auto* r = CONTAINER::construct<T>(m);
+			CONTAINER::add_entry(r);
 			return r;
 		}
 
@@ -83,22 +116,20 @@ namespace cppe
 		void release(T * e)
 		{
 			CPPE_ASSERT(e != nullptr);
-			unlink(e);
-			e->~T();
-			ALLOCATOR::free(e->pool_entry_ptr());
+			
+			CONTAINER::remove_entry(e);
+			const void* m = CONTAINER::destruct_entry(e);
+			ALLOCATOR::free(m);
 		}
 
 	public:
 		void clear()
 		{
-			AbstractPoolEntry* itr = first;
-			while(itr != nullptr)
-			{
-				auto* next = itr->right;
-				itr->~AbstractPoolEntry();
-				itr = next;	
-			}
-			first = last = nullptr;
+			CONTAINER::visit([&](base_entry_t* e) {
+				CPPE_ASSERT(e != nullptr);
+				CONTAINER::destruct_entry(e);
+			});
+			CONTAINER::clear();
 			ALLOCATOR::clear();
 		}
 		

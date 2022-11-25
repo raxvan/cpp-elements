@@ -11,7 +11,12 @@ namespace cppe
 
 	//--------------------------------------------------------------------------------------------------------------------------------
 
-	void AbstractPoolListImpl::link(AbstractPoolEntry* entry)
+	void AbstractEntryContainer::clear()
+	{
+		first = last = nullptr;
+	}
+
+	void AbstractEntryContainer::add_entry(AbstractPoolEntry* entry)
 	{
 		CPPE_ASSERT(entry != nullptr);
 		if(first == nullptr)
@@ -28,7 +33,7 @@ namespace cppe
 		}
 
 	}
-	void AbstractPoolListImpl::unlink(AbstractPoolEntry* entry)
+	void AbstractEntryContainer::remove_entry(AbstractPoolEntry* entry)
 	{
 		CPPE_ASSERT(entry != nullptr);
 		if(first == last)
