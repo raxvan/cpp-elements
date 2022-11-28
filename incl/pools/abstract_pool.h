@@ -103,6 +103,7 @@ namespace cppe
 		template <class T>
 		T* create()
 		{
+			//TODO: constructo args when needed
 			constexpr std::size_t sz = alloc_size<T>();
 			void* m = ALLOCATOR::alloc(sz);
 			CPPE_ASSERT(m != nullptr);
@@ -111,6 +112,7 @@ namespace cppe
 			CONTAINER::add_entry(r);
 			return r;
 		}
+
 
 		template <class T>
 		void release(T * e)

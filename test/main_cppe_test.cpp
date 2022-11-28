@@ -305,51 +305,48 @@ void test_abstract_pool()
 
 	TTF_ASSERT(pool.size() == 0);
 
-	std::size_t called_cestructor_count = 0;
-
+	ttf::instance_counter test_instance;
 	struct test_obj : public cppe::AbstractPoolEntry
 	{
-	public:
-		std::size_t* count = nullptr;;
-	public:
-		test_obj()
-		{
-		}
-		~test_obj()
-		{
-			(*count)++;
-		}
+		ttf::instance_counter inst; 
 	};
 
 	{
 		pool.set_capacity(sizeof(test_obj));
 
 		auto* inst1 = pool.create<test_obj>();
-		inst1->count = &called_cestructor_count;
+		TTF_ASSERT(inst1 != nullptr);
+		inst1->inst = test_instance;
 
 		TTF_ASSERT(pool.size() == sizeof(test_obj));
+		TTF_ASSERT(test_instance.share() == 2);
 
 		auto* inst2 = pool.create<test_obj>();
-		inst2->count = &called_cestructor_count;
+		TTF_ASSERT(inst2 != nullptr);
+		inst2->inst = test_instance;
 
 		TTF_ASSERT(pool.size() == sizeof(test_obj) * 2);
+		TTF_ASSERT(test_instance.share() == 3);
 
 		pool.release(inst1);
-		pool.release(inst2);	
-		TTF_ASSERT(called_cestructor_count == 2);
+		pool.release(inst2);
+
+		TTF_ASSERT(test_instance.share() == 1);
 	}
 
 	{
 		pool.clear();
-		TTF_ASSERT(called_cestructor_count == 2);
+		TTF_ASSERT(test_instance.share() == 1);
 
 		auto* inst1 = pool.create<test_obj>();
-		inst1->count = &called_cestructor_count;
+		TTF_ASSERT(inst1 != nullptr);
+		inst1->inst = test_instance;
 		auto* inst2 = pool.create<test_obj>();
-		inst2->count = &called_cestructor_count;
-
+		TTF_ASSERT(inst2 != nullptr);
+		inst2->inst = test_instance;
+		TTF_ASSERT(test_instance.share() == 3);
 		pool.clear();
-		TTF_ASSERT(called_cestructor_count == 4);
+		TTF_ASSERT(test_instance.share() == 1);
 		TTF_ASSERT(pool.size() == 0);
 	}
 
@@ -372,6 +369,7 @@ void test_abstract_pool()
 
 		pool.set_capacity(1);
 		auto* inst1 = pool.create<test_obj1>();
+		TTF_ASSERT(inst1 != nullptr);
 		pool.release(inst1);
 		TTF_ASSERT(pool.size() != 0);//because it can't remove test_obj1 because allocator does not search properly in the alloc list
 		pool.clear();
@@ -384,6 +382,37 @@ void test_abstract_pool()
 
 }
 
+void test_virtual_lambda()
+{
+
+	struct BaseInterface
+	{
+		virtual int operator ()(const int& value) = 0;
+	};
+	auto test_interface = [](BaseInterface& i) {
+		int r = i(10);
+		TTF_ASSERT(r == 20);
+	};
+
+	ttf::instance_counter s1;
+	ttf::instance_counter s2;
+	{
+		auto double_the_value = cppe::lambda_traits<int(const int&)>::make_virtual_lambda<BaseInterface>([s1, s = std::move(s2)](const int& value) -> int {
+			TTF_ASSERT(s1.share() == 2);
+			TTF_ASSERT(s.share() == 1);
+			return value * 2;
+		});
+		
+		{
+			auto f = std::move(double_the_value);
+			test_interface(f);
+		}
+
+		TTF_ASSERT(s1.share() == 1);
+	}
+
+
+}
 
 void core_test_main()
 {
@@ -392,6 +421,7 @@ void core_test_main()
 	TEST_FUNCTION(test_lambda_buffer);
 	TEST_FUNCTION(test_bucket_pool);
 	TEST_FUNCTION(test_abstract_pool);
+	TEST_FUNCTION(test_virtual_lambda);
 
 }
 

@@ -5,6 +5,16 @@
 namespace cppe
 {
 
+	template <class BASE, class T, class FT>
+	struct virtual_lambda;
+
+	template <std::size_t CAPTURE_SIZE, class T>
+	struct lambda;
+
+	template <class FT>
+	struct lambda_traits;
+
+
 	//--------------------------------------------------------------------------------------------------------------------------------
 
 	template <class V>
@@ -57,6 +67,8 @@ namespace cppe
 
 	public:
 		lambda_storage() = default;
+		lambda_storage(const class_t&) = default;
+		class_t& operator = (const class_t&) = default;
 
 	public:
 		template <class TT>
@@ -127,5 +139,40 @@ namespace cppe
 			*cast_ptr<class_t>(lhs) = std::move(*cast_ptr<class_t>(rhs));
 		}
 	};
+
+	//--------------------------------------------------------------------------------------------------------------------------------
+
+	template <class BASE, class T, class R, class ... ARGS>
+	struct virtual_lambda <BASE,T,R(ARGS...)>
+		 : public BASE
+	{
+		using class_t = virtual_lambda<BASE, T, R(ARGS...)>;
+
+		T instance;
+	public:
+		template <class TT>
+		virtual_lambda(const TT& _value)
+			: instance(_value)
+		{
+		}
+		template <class TT>
+		virtual_lambda(TT&& _value)
+			: instance(std::forward<T>(_value))
+		{
+		}
+	public:
+		virtual_lambda() = default;
+		virtual_lambda(const class_t&) = default;
+		class_t& operator =(const class_t&) = default;
+
+		virtual_lambda(class_t&&) = default;
+		class_t& operator =(class_t&&) = default;
+	public:
+		virtual R operator()(ARGS ... args) override
+		{
+			return instance(args...);
+		}
+	};		
+
 
 }

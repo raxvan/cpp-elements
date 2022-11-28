@@ -5,9 +5,6 @@
 
 namespace cppe
 {
-	template <std::size_t CAPTURE_SIZE, class T>
-	struct lambda;
-
 	template <std::size_t CAPTURE_SIZE, class R, class... ARGS>
 	struct lambda<CAPTURE_SIZE, R(ARGS...)>
 	{
