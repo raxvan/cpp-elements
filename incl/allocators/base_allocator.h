@@ -12,6 +12,14 @@ namespace cppe
 		using allocation_info_t = std::pair<byte_t*, std::size_t>;
 	}
 
+	template <class T, std::size_t ALIGN = 8>
+	constexpr inline std::size_t alligned_alloc_size()
+	{
+		const std::size_t align = ALIGN;
+		std::size_t r = sizeof(T);
+		return (r + align - 1) & ~(align - 1); 
+	}
+
 	struct overflow_allocator
 	{
 	public:
