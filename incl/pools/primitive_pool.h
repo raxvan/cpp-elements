@@ -45,7 +45,7 @@ namespace cppe
 			return nullptr;
 		}
 
-		void release(const T* px)
+		cppedecl_finline void release(const T* px)
 		{
 			auto d = start_end_distance(&m_data[0], px);
 			CPPE_ASSERT(d < m_data.size());

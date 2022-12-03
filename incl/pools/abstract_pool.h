@@ -141,7 +141,7 @@ namespace cppe
 		{
 			const std::size_t align = 8;
 			std::size_t r = sizeof(T);
-			return r & ~(align - 1); 
+			return (r + align - 1) & ~(align - 1); 
 		}
 	};
 
