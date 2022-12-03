@@ -139,6 +139,8 @@ namespace cppe
 		FALLOC m_overflow_fallback;
 	};
 
+	//--------------------------------------------------------------------------------------------------------------------------------
+
 	template <class LALLOC, class FALLOC>
 	inline void safe_linear_allocator<LALLOC, FALLOC>::clear()
 	{
