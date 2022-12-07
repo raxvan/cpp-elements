@@ -58,10 +58,11 @@ namespace cppe
 		}*/
 
 	public:
-		void push_back(const TYPE& t)
+		template <std::convertible_to<TYPE> FROM>
+		void push_back(FROM&& from)
 		{
 			CPPE_ASSERT(m_size < SIZE);
-			m_data[m_size++] = t;
+			m_data[m_size++] = std::forward<FROM>(from);
 		}
 		std::size_t push_back_index()
 		{
