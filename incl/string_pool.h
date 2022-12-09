@@ -153,13 +153,13 @@ namespace cppe
 		string_pool(const std::vector<char>&);
 		~string_pool();
 
-		string_t insert(const std::string& s);
-		string_t insert(const std::vector<char>& s);
-
 		string_t begin_append();
 		void	 append(string_t& s, const char c);
 		void	 append(string_t& s, const char* c, const std::size_t char_count);
 
+		string_t insert(const std::string& s);
+		string_t insert(const std::string_view& s);
+		string_t insert(const std::vector<char>& s);
 		string_t insert(const string_view& s);
 		string_t insert(const string_view* s, const std::size_t count);
 		string_t insert(const char* x);
@@ -225,6 +225,10 @@ namespace cppe
 	inline string_pool::string_t string_pool::insert(const std::string& s)
 	{
 		return insert(s.c_str(), s.size());
+	}
+	inline string_pool::string_t string_pool::insert(const std::string_view& s)
+	{
+		return insert(s.data(), s.size());
 	}
 	inline string_pool::string_t string_pool::insert(const std::vector<char>& s)
 	{
