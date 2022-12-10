@@ -70,6 +70,7 @@ namespace cppe
 		string_pool_handle get_next() const;
 
 		string_view to_string_view() const;
+		std::string_view to_std_string_view() const;
 		std::size_t size() const;
 		string_info info() const;
 
@@ -220,6 +221,10 @@ namespace cppe
 	inline string_view string_pool_handle::to_string_view() const
 	{
 		return string_view::make_null_terminated(get(), size());
+	}
+	inline std::string_view string_pool_handle::to_std_string_view() const
+	{
+		return std::string_view(get(), size());
 	}
 	//------------------------------------------------------------------------------------------
 	inline string_pool::string_t string_pool::insert(const std::string& s)

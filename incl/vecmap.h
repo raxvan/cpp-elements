@@ -6,7 +6,7 @@ namespace cppe
 {
 	//--------------------------------------------------------------------------
 	//--------------------------------------------------------------------------
-	template <typename KEY, typename VALUE = KEY>
+	template <typename KEY, typename VALUE>
 	struct vecmap
 	{
 	public:
@@ -42,6 +42,18 @@ namespace cppe
 			return insert(key_value_t(std::forward<K>(k), std::forward<V>(t)));
 		}
 
+	public:
+		template< std::convertible_to<KEY> FK,std::convertible_to<VALUE> FV>
+		void push_back(FK&& k, FV&& v)
+		{
+			m_elements.push_back({std::forward<FK>(k),std::forward<FV>(v)});
+		}
+		void sort()
+		{
+			std::sort(m_elements.begin(), m_elements.end(), [](const auto& a, const auto& b){
+				return a.first < b.first;
+			});
+		}
 	public:
 		const value_t* find(const key_t& k) const
 		{

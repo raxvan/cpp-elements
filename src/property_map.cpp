@@ -128,7 +128,9 @@ namespace cppe
 		std::string right = strhelpers::std_trim(s.substr(strBegin + 1, s.size()));
 
 		if (left.size() > 0 && right.size() > 0)
-			set(string_view(left), string_view(right));
+		{
+			m_data.push_back(m_buf.insert(string_view(left)), m_buf.insert(string_view(right)));
+		}
 	}
 
 	void property_map::LoadArray(const array_view<const char* const>& elements)
@@ -137,6 +139,7 @@ namespace cppe
 		{
 			load_expr_internal(e);
 		}
+		m_data.sort();
 	}
 	void property_map::LoadIni(std::istream& is)
 	{
@@ -151,6 +154,7 @@ namespace cppe
 				load_expr_internal(s);
 			}
 		}
+		m_data.sort();
 #ifdef _DEBUG
 		for (std::size_t i = 0; i < m_data.size(); i++)
 		{
@@ -159,6 +163,7 @@ namespace cppe
 			kv.second.update();
 		}
 #endif
+
 	}
 	bool property_map::LoadIni(const char* fname)
 	{

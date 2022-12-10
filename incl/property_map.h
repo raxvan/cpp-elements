@@ -39,6 +39,16 @@ namespace cppe
 	protected:
 		void load_expr_internal(const std::string& s);
 
+	public:
+		std::size_t size() const
+		{
+			return m_data.size();
+		}
+		const std::pair<string_pool_handle, string_pool_handle>& get(const std::size_t i)
+		{
+			return m_data.at(i);
+		}
+
 	protected:
 		vecmap<string_pool_handle, string_pool_handle> m_data;
 		string_pool									   m_buf;
