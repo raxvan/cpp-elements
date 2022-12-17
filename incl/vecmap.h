@@ -1,6 +1,7 @@
 #pragma once
 
 #include "config/cppelements_config.h"
+#include <algorithm>
 
 namespace cppe
 {
