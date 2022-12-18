@@ -20,6 +20,14 @@ namespace cppe
 		return (r + align - 1) & ~(align - 1); 
 	}
 
+	template <std::size_t ALIGN = 8>
+	inline std::size_t alligned_alloc_size(const std::size_t sz)
+	{
+		const std::size_t align = ALIGN;
+		std::size_t r = sz;
+		return (r + align - 1) & ~(align - 1); 
+	}
+
 	struct overflow_allocator
 	{
 	public:
