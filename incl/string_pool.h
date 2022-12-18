@@ -39,7 +39,7 @@ namespace cppe
 		{
 		}
 		string_pool_handle(const string_view& as)
-			: string_pool_handle(as.c_str(), as.size())
+			: string_pool_handle(as.data(), as.size())
 		{
 		}
 		string_pool_handle(char* const c)

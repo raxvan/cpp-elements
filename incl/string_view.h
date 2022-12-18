@@ -61,6 +61,10 @@ namespace cppe
 			: string_view(make_null_terminated(s.c_str(), s.size()))
 		{
 		}
+		string_view(const std::string_view& s)
+			: string_view(make_subview(s.data(), s.size()))
+		{
+		}
 
 		template <class Allocator>
 		string_view(const std::vector<char, Allocator>& vec_data)
