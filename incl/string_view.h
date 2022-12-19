@@ -203,10 +203,24 @@ namespace cppe
 		string_view_size_t m_size = 0;
 	};
 
+	//--------------------------------------------------------------------------------------------------------------------------------
+
 	template <std::size_t N>
 	cppedecl_finline fixed_string<N>::fixed_string(const cppe::string_view& s)
 		: fixed_string<N>(s.data(), s.size())
 	{
+	}
+
+	template <std::size_t N>
+	cppedecl_finline fixed_string<N>& fixed_string<N>::operator =(const cppe::string_view& s)
+	{
+		return operator = (s.std_string_view());
+	}
+
+	template <std::size_t N>
+	cppedecl_finline cppe::string_view fixed_string<N>::get_string_view() const
+	{
+		return cppe::string_view::make_null_terminated(get(), size());
 	}
 
 	template <class InputIt>

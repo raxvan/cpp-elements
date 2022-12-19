@@ -158,6 +158,12 @@ namespace cppe
 #endif
 	}
 
+	std::size_t strutil::length(const char* _start, const char* _end)
+	{
+		DEV_ASSERT(_start <= _end);
+		return std::size_t(_end - _start);
+	}
+
 	cppedecl_noalias bool strutil::equals_lower(const char* x, const char* y)
 	{
 		CPPE_ASSERT(x != nullptr && y != nullptr);

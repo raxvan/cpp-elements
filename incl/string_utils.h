@@ -42,6 +42,7 @@ namespace cppe
 
 	public:
 		static std::size_t length(const char* s);
+		static std::size_t length(const char* _start, const char* _end);
 
 		static cppe::cmp_result_t compare(const char* Source1, const char* Source2);
 		static const char*		  find_next_whitespace(const char* buffer);

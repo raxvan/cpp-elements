@@ -61,6 +61,8 @@ namespace cppe
 		}
 
 		class_t& operator=(const std::string_view& as);
+		class_t& operator=(const cppe::string_view& as);
+
 		class_t& operator=(const char* c)
 		{
 			return *new (this) class_t(c);
@@ -73,7 +75,9 @@ namespace cppe
 
 		// for specific de-serialization only
 		std::string_view create(const std::size_t len);
-		std::string_view to_string_view() const;
+		
+		cppe::string_view get_string_view() const;
+		std::string_view std_string_view() const;
 
 	public:
 		bool operator<(const class_t& s) const
@@ -218,8 +222,9 @@ namespace cppe
 		return std::string_view(get(), m_size);
 	}
 	template <std::size_t N>
-	cppedecl_finline std::string_view fixed_string<N>::to_string_view() const
+	cppedecl_finline std::string_view fixed_string<N>::std_string_view() const
 	{
 		return std::string_view(get(), size());
 	}
+	
 }
