@@ -60,15 +60,21 @@ namespace cppe
 			, m_size(_size)
 		{
 		}
-		template <class QT, class AL>
-		inline array_view(std::vector<QT, AL>& v)
-			: m_data(static_cast<T*>(v.data()))
+		template <class AL>
+		inline array_view(std::vector<T, AL>& v)
+			: m_data(v.data())
 			, m_size(v.size())
 		{
 		}
-		template <class QT, class AL>
-		inline array_view(const std::vector<QT, AL>& v)
-			: m_data(static_cast<T*>(v.data()))
+		template <std::size_t N>
+		inline array_view(std::array<T, N>& v)
+			: m_data(v.data())
+			, m_size(N)
+		{
+		}
+		template <class AL>
+		inline array_view(const std::vector<T, AL>& v)
+			: m_data(v.data())
 			, m_size(v.size())
 		{
 		}

@@ -39,7 +39,7 @@ namespace cppe
 			T* ptr = nullptr;
 
 		private:
-			uint_fast32_t index;
+			uint_fast32_t index = std::numeric_limits<uint_fast32_t>::max();
 			friend struct primitive_bucket_pool<T, BUCKET_SKIP_COUNT>;
 
 		public:
