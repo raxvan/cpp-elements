@@ -125,7 +125,7 @@ namespace cppe
 		{
 			return (size() == 0);
 		}
-		bool is_terminated() const
+		bool is_terminated() const //return true if the string is terminated with '\0'
 		{
 			CPPE_ASSERT(m_px != nullptr);
 			return m_size >= 0;

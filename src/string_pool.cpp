@@ -1,4 +1,5 @@
 #include "string_pool.h"
+#include <fstream>
 
 namespace cppe
 {
@@ -89,6 +90,20 @@ namespace cppe
 		m_content.insert(m_content.end(), x, x + size);
 		m_content.push_back('\0'); // terminating null character;
 
+		return string_pool_handle(ind, size, this);
+	}
+	string_pool_handle string_pool::insert_file(const char* abs_file_path)
+	{
+		if (abs_file_path == nullptr || abs_file_path[0] == '\0')
+			return {};
+		std::ifstream t(abs_file_path);
+		if (t.is_open() == false)
+			return {};
+
+		std::size_t ind = m_content.size();
+		m_content.insert(m_content.end(), (std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
+		std::size_t size = m_content.size() - ind;
+		m_content.push_back('\0');
 		return string_pool_handle(ind, size, this);
 	}
 	void string_pool::swap(string_pool& o)

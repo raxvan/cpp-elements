@@ -160,7 +160,7 @@ namespace cppe
 
 	std::size_t strutil::length(const char* _start, const char* _end)
 	{
-		DEV_ASSERT(_start <= _end);
+		CPPE_ASSERT(_start <= _end);
 		return std::size_t(_end - _start);
 	}
 

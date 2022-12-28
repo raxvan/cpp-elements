@@ -12,35 +12,35 @@ namespace cppe
 		string_pool_handle bs = get(s);
 		if (bs.size() == 0)
 			return default_value;
-		return property_map::parseInt32(bs.to_string_view(), default_value);
+		return property_map::parseInt32(bs.string_view(), default_value);
 	}
 	uint32_t property_map::getUnsigned32(const string_view& s, const uint32_t default_value) const
 	{
 		string_pool_handle bs = get(s);
 		if (bs.size() == 0)
 			return default_value;
-		return property_map::parseUnsigned32(bs.to_string_view(), default_value);
+		return property_map::parseUnsigned32(bs.string_view(), default_value);
 	}
 	bool property_map::getBool(const string_view& s, const bool default_value) const
 	{
 		string_pool_handle bs = get(s);
 		if (bs.size() == 0)
 			return default_value;
-		return property_map::parseBool(bs.to_string_view(), default_value);
+		return property_map::parseBool(bs.string_view(), default_value);
 	}
 	float property_map::getFloat(const string_view& s, const float default_value) const
 	{
 		string_pool_handle bs = get(s);
 		if (bs.size() == 0)
 			return default_value;
-		return property_map::parseFloat(bs.to_string_view(), default_value);
+		return property_map::parseFloat(bs.string_view(), default_value);
 	}
 	string_view property_map::getString(const string_view& s, const string_view& default_value) const
 	{
 		string_pool_handle bs = get(s);
 		if (bs.size() == 0)
 			return default_value;
-		return bs.to_string_view();
+		return bs.string_view();
 	}
 	//----------------------------------------------------------------------------------------------------------
 	void property_map::setInt32(const string_view& s, const int value)

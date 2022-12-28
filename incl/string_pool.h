@@ -69,8 +69,8 @@ namespace cppe
 
 		string_pool_handle get_next() const;
 
-		string_view to_string_view() const;
-		std::string_view to_std_string_view() const;
+		string_view string_view() const;
+		std::string_view std_string_view() const;
 		std::size_t size() const;
 		string_info info() const;
 
@@ -99,25 +99,32 @@ namespace cppe
 		}
 
 	public:
-		bool operator<(const string_view& s) const
+		bool operator<(const cppe::string_view& s) const
 		{
 			if (size() == s.size())
 				return cppe::strutil::less(get(), s.c_str(), s.size());
 			return size() < s.size();
 		}
-		bool operator==(const string_view& s) const
+		bool operator==(const cppe::string_view& s) const
 		{
 			if (size() == s.size())
 				return cppe::strutil::equals(get(), s.c_str(), s.size());
 			return false;
 		}
-		bool operator!=(const string_view& s) const
+		bool operator!=(const cppe::string_view& s) const
 		{
 			if (size() == s.size())
 				return !cppe::strutil::equals(get(), s.c_str(), s.size());
 			return true;
 		}
 
+		struct std_hash
+		{
+			inline std::size_t operator()(const string_pool_handle& h) const
+			{
+				return std::hash<std::string_view>{}(h.std_string_view());
+			}
+		};
 	protected:
 		friend struct string_pool;
 
@@ -165,6 +172,8 @@ namespace cppe
 		string_t insert(const string_view* s, const std::size_t count);
 		string_t insert(const char* x);
 		string_t insert(const char* x, const std::size_t size);
+
+		string_t insert_file(const char* abs_file_path);
 
 		string_t get_all();
 		string_t get_first() const;
@@ -218,11 +227,11 @@ namespace cppe
 		rvalue.m_size = uint32_t(m_size);
 		return rvalue;
 	}
-	inline string_view string_pool_handle::to_string_view() const
+	inline string_view string_pool_handle::string_view() const
 	{
 		return string_view::make_null_terminated(get(), size());
 	}
-	inline std::string_view string_pool_handle::to_std_string_view() const
+	inline std::string_view string_pool_handle::std_string_view() const
 	{
 		return std::string_view(get(), size());
 	}
