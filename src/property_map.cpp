@@ -3,6 +3,7 @@
 #include "string_helpers.h"
 #include <fstream>
 #include <string>
+#include <sstream>
 
 namespace cppe
 {
@@ -163,7 +164,11 @@ namespace cppe
 			kv.second.update();
 		}
 #endif
-
+	}
+	void property_map::LoadFromString(const cppe::string_view& sv)
+	{
+		std::stringstream ss {sv.std_string()};
+		LoadIni(ss);
 	}
 	bool property_map::LoadIni(const char* fname)
 	{

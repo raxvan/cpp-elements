@@ -14,6 +14,7 @@ namespace cppe
 		void LoadIni(std::istream& is);
 		bool LoadIni(const char* fname);
 		void SaveIni(const char* fname) const;
+		void LoadFromString(const cppe::string_view& sv);
 
 	public:
 		int32_t			   getInt32(const string_view& s, const int32_t default_value) const;

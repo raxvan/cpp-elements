@@ -76,7 +76,7 @@ namespace cppe
 		// for specific de-serialization only
 		std::string_view create(const std::size_t len);
 		
-		cppe::string_view get_string_view() const;
+		cppe::string_view string_view() const;
 		std::string_view std_string_view() const;
 
 	public:

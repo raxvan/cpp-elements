@@ -218,7 +218,7 @@ namespace cppe
 	}
 
 	template <std::size_t N>
-	cppedecl_finline cppe::string_view fixed_string<N>::get_string_view() const
+	cppedecl_finline cppe::string_view fixed_string<N>::string_view() const
 	{
 		return cppe::string_view::make_null_terminated(get(), size());
 	}
