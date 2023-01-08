@@ -33,7 +33,7 @@
 
 //--------------------------------------------------------------------------------------------------------------------------------
 
-namespace cllio
+namespace cppe
 {
 	extern "C++" void cppe_assert_failed(const char* file, const int line, const char* cond);
 }
@@ -42,12 +42,12 @@ namespace cllio
 			do                                                      \
 			{                                                       \
 				if (!(_COND))                                       \
-					cppe_assert_failed(__FILE__, __LINE__, #_COND); \
+					cppe::cppe_assert_failed(__FILE__, __LINE__, #_COND); \
 			} while (false)
 #		define CPPE_ASSERT_FALSE(CSTR_MSG)                       \
 			do                                                    \
 			{                                                     \
-				cppe_assert_failed(__FILE__, __LINE__, CSTR_MSG); \
+				cppe::cppe_assert_failed(__FILE__, __LINE__, CSTR_MSG); \
 			} while (false)
 #	endif
 //--------------------------------------------------------------------------------------------------------------------------------
@@ -95,4 +95,3 @@ namespace cllio
 
 //--------------------------------------------------------------------------------------------------------------------------------
 #include "cppelements_types.h"
-#include <vector>

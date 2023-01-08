@@ -1,6 +1,11 @@
 
 #pragma once
 
+#include <vector>
+#ifndef CPPE_DEV_PLATFORM
+#	include <utility>
+#endif
+
 namespace cppe
 {
 	enum class cmp_result_t : int
