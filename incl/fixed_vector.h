@@ -15,6 +15,11 @@ namespace cppe
 		using value_type = TYPE;
 		using pointer = TYPE*;
 
+		static constexpr std::size_t max_size()
+		{
+			return SIZE;
+		} 
+
 	public:
 		fixed_vector()
 			: m_size(0)
