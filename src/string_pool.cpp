@@ -119,11 +119,11 @@ namespace cppe
 	}
 	string_pool::string_t string_pool::get_all()
 	{
-		return string_pool::string_t(0, m_content.size(), this);
+		CPPE_ASSERT(m_content.size() > 0 && m_content.back() == '\0');
+		return string_pool::string_t(0, m_content.size() - 1, this);
 	}
 	string_pool::string_t string_pool::get_first() const
 	{
-
 		if (m_content.size() > 0)
 			return string_pool::string_t(0, cppe::strutil::length(m_content.data()), this, m_content.data());
 

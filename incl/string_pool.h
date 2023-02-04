@@ -38,7 +38,11 @@ namespace cppe
 			, m_cache(const_cast<char*>(c))
 		{
 		}
-		string_pool_handle(const string_view& as)
+		string_pool_handle(const cppe::string_view& as)
+			: string_pool_handle(as.data(), as.size())
+		{
+		}
+		string_pool_handle(const std::string_view& as)
 			: string_pool_handle(as.data(), as.size())
 		{
 		}
