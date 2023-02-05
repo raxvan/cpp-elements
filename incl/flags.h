@@ -69,12 +69,12 @@ namespace cppe
 		{
 			return !isEmpty();
 		}
-		cppedecl_finline class_t& operator+=(const T& flag)
+		cppedecl_finline class_t& operator += (const T& flag)
 		{
 			add(flag);
 			return (*this);
 		}
-		cppedecl_finline class_t& operator-=(const T& flag)
+		cppedecl_finline class_t& operator -= (const T& flag)
 		{
 			remove(flag);
 			return (*this);
@@ -102,8 +102,12 @@ namespace cppe
 		cppedecl_finline bool reset_and_test(const T& d, const bool condition)
 		{
 			bool r = test(d);
-			reset(d, condition);
-			return r != condition;
+			if(r != condition)
+			{
+				reset(d, condition);
+				return true;
+			}
+			return false;
 		}
 		cppedecl_finline class_t& reset(const T& d, const bool condition)
 		{
@@ -114,6 +118,15 @@ namespace cppe
 			return (*this);
 		}
 
+		cppedecl_finline bool once(const T& f)
+		{
+			if(test(f))
+			{
+				remove(f);
+				return true;
+			}
+			return false;
+		}
 	public:
 		cppedecl_finline bool isFull() const
 		{
