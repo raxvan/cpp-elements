@@ -14,6 +14,7 @@ namespace cppe
 		stack_allocator_buffer& operator=(const stack_allocator_buffer&) = delete;
 
 		stack_allocator_buffer() = default;
+		stack_allocator_buffer(const std::size_t base_capacity);
 
 	public:
 		~stack_allocator_buffer();
@@ -96,13 +97,13 @@ namespace cppe
 		{
 		}
 
-		static inline const T* get_element_ptr(const detail::byte_t* base_ptr, const std::size_t index)
+		static inline const T* get_element_ptr(const void* base_ptr, const std::size_t index)
 		{
-			return static_cast<const T*>(base_ptr) + index;
+			return reinterpret_cast<const T*>(base_ptr) + index;
 		}
-		static inline T* get_element_ptr(detail::byte_t* base_ptr, const std::size_t index)
+		static inline T* get_element_ptr(void* base_ptr, const std::size_t index)
 		{
-			return static_cast<T*>(base_ptr) + index;
+			return reinterpret_cast<T*>(base_ptr) + index;
 		}
 		static inline std::size_t get_buffer_size(const std::size_t element_count)
 		{
@@ -114,14 +115,46 @@ namespace cppe
 		{
 			for (std::size_t i = 0, s = m_size; i < s; i++)
 			{
-				get_element_ptr(stack_allocator::m_itr, i)->~T();
+				get_element_ptr(data(), i)->~T();
 			}
 		}
+
+	public:
+		inline std::size_t size() const
+		{
+			return m_size;
+		}
+
+		inline T& operator [](const std::size_t index)
+		{
+			CPPE_ASSERT(index < m_size);
+			auto* e = get_element_ptr(data(), index);
+			CPPE_ASSERT(e != nullptr);
+			return *e;
+		}
+		inline const T& operator [](const std::size_t index) const
+		{
+			CPPE_ASSERT(index < m_size);
+			auto* e = get_element_ptr(data(), index);
+			CPPE_ASSERT(e != nullptr);
+			return *e;
+		}
+		inline T& back()
+		{
+			CPPE_ASSERT(m_size > 0);
+			return (*this)[m_size - 1];
+		}
+		inline const T& back() const
+		{
+			CPPE_ASSERT(m_size > 0);
+			return (*this)[m_size - 1];
+		}
+	public:
 
 		void push_back(const T& value)
 		{
 			std::size_t		end = m_size++;
-			detail::byte_t* p = stack_allocator::alloc_unique(get_buffer_size(m_size));
+			auto* p = stack_allocator::alloc_unique(get_buffer_size(m_size));
 			CPPE_ASSERT(p != nullptr);
 			new (get_element_ptr(p, end)) T(value);
 		}
@@ -129,7 +162,7 @@ namespace cppe
 		void push_back(FT&& value)
 		{
 			std::size_t		end = m_size++;
-			detail::byte_t* p = stack_allocator::alloc_unique(get_buffer_size(m_size));
+			auto* p = stack_allocator::alloc_unique(get_buffer_size(m_size));
 			CPPE_ASSERT(p != nullptr);
 			new (get_element_ptr(p, end)) T(std::forward<FT>(value));
 		}
@@ -137,10 +170,12 @@ namespace cppe
 		{
 			CPPE_ASSERT(m_size > 0);
 			std::size_t new_sz = --m_size;
-			get_element_ptr(stack_allocator::m_itr, new_sz)->~T();
-			detail::byte_t* p = stack_allocator::alloc_unique(get_buffer_size(new_sz));
+			get_element_ptr(data(), new_sz)->~T();
+			auto* p = stack_allocator::alloc_unique(get_buffer_size(new_sz));
 			CPPE_ASSERT(p != nullptr);
 		}
+
+
 
 	protected:
 		std::size_t m_size = 0;

@@ -4,6 +4,10 @@
 
 namespace cppe
 {
+	stack_allocator_buffer::stack_allocator_buffer(const std::size_t base_capacity)
+	{
+		resize(base_capacity);
+	}
 	stack_allocator_buffer::~stack_allocator_buffer()
 	{
 		CPPE_ASSERT(m_head == nullptr); // can't destroy this container while allocation scopes are using it
