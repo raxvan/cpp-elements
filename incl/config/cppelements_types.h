@@ -2,6 +2,7 @@
 #pragma once
 
 #include <vector>
+#include <array>
 #ifndef CPPE_DEV_PLATFORM
 #	include <utility>
 #endif

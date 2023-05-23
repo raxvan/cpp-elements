@@ -108,7 +108,7 @@ namespace cppe
 			void* m = ALLOCATOR::alloc(sz);
 			CPPE_ASSERT(m != nullptr);
 			
-			auto* r = CONTAINER::construct<T>(m);
+			auto* r = typename CONTAINER::construct<T>(m);
 			CONTAINER::add_entry(r);
 			return r;
 		}
@@ -120,7 +120,7 @@ namespace cppe
 			CPPE_ASSERT(e != nullptr);
 			
 			CONTAINER::remove_entry(e);
-			const void* m = CONTAINER::destruct_entry(e);
+			const void* m = typename CONTAINER::destruct_entry(e);
 			ALLOCATOR::free(m);
 		}
 

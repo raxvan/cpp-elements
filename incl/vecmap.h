@@ -37,7 +37,7 @@ namespace cppe
 			auto i = std::lower_bound(m_elements.begin(), m_elements.end(), e, [](const key_value_t& left, const key_value_t& right) { return left.first < right.first; });
 			return m_elements.insert(i, std::forward<key_value_t>(e))->second;
 		}
-		template <typename K, typename V, typename = perfect_forward_t<K, key_t>, typename = perfect_forward_t<V, value_t>>
+		template <typename K, typename V>
 		value_t& insert(K&& k, V&& t)
 		{
 			return insert(key_value_t(std::forward<K>(k), std::forward<V>(t)));
@@ -77,7 +77,7 @@ namespace cppe
 				return (i->second);
 			return _default_value;
 		}
-		template <typename K, typename = perfect_forward_t<K, key_t>>
+		template <typename K>
 		value_t& operator[](K&& k)
 		{
 
@@ -110,7 +110,7 @@ namespace cppe
 				i = m_elements.insert(i, _func_default_key_value());
 			return i->second;
 		}
-		template <typename OT, typename = perfect_forward_t<OT, value_t>>
+		template <typename OT>
 		value_t& setdefault(const key_t& k, OT&& v)
 		{
 

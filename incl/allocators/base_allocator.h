@@ -3,6 +3,7 @@
 #include "../config/cppelements_config.h"
 #include <mutex>
 #include <unordered_set>
+#include <memory>
 
 namespace cppe
 {
